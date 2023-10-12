@@ -1,0 +1,17 @@
+.container {
+  border-style: solid;
+  background-color: lightcyan;
+  padding: 20px;
+  width: 300px;
+}
+
+.input-container, .output-container, .info-container {
+  background-color: lightblue;
+  font-family: sans-serif;
+  border-radius: 30px;
+  border-style: solid;
+  padding: 10px;
+  margin: 20px;
+  text-align: center;
+}
+
