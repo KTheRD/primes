@@ -1,7 +1,7 @@
 import GithubCorner from "react-github-corner"
 import classes from "./app.module.css"
 import { useEffect, useState } from "react"
-import isPrime from "./isPrime"
+import isPrime, { stopComputing } from "./isPrime"
 
 const getMessages = (isPrime: null | boolean | 0 | 1) => {
   switch (isPrime) {
@@ -24,17 +24,23 @@ function App() {
   const [isCurentNumberPrime, setIsCurrentNumberPrime] = useState<null | boolean | 1 | 0>(null)
 
   useEffect(() => {
-    if (inputNumber === null) return;
-    if (isComputing) return;
+    if (inputNumber === null) {
+      setIsCurrentNumberPrime(null)
+      return;
+    };
+    if (isComputing) {
+      stopComputing()
+    }
 
-    const timeoutID = setTimeout(() => { //wait for fullo number to be entered
+    const timeoutID = setTimeout(() => { // will start only after computing will stop
       setIsComputing(true)
 
       isPrime(inputNumber).then(res => {
+        if (res === null) return
         setIsCurrentNumberPrime(res)
         setIsComputing(false)
       })
-    }, 500)
+    })
 
     return () => clearTimeout(timeoutID)
   }, [inputNumber])
@@ -73,7 +79,6 @@ function App() {
             type="text" //number would be more convinient, but the assignment requires text type
             onChange={handleOnChange}
             value={inputNumber ?? ""}
-            disabled={isComputing}
           />
         </div>
         <div className={classes["output-container"]}>
