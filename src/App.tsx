@@ -1,7 +1,7 @@
 import GithubCorner from "react-github-corner"
 import classes from "./app.module.css"
 import { useEffect, useState } from "react"
-import isPrime, { stopComputing } from "./isPrime"
+import IsPrimeComputer from "./isPrime"
 
 const getMessages = (isPrime: null | boolean | 0 | 1) => {
   switch (isPrime) {
@@ -17,6 +17,8 @@ const getMessages = (isPrime: null | boolean | 0 | 1) => {
   }
 }
 
+const [isPrime, stopComputing] = IsPrimeComputer()
+
 function App() {
 
   const [inputNumber, setInputNumber] = useState<number | null>(null)
@@ -24,13 +26,14 @@ function App() {
   const [isCurentNumberPrime, setIsCurrentNumberPrime] = useState<null | boolean | 1 | 0>(null)
 
   useEffect(() => {
+    if (isComputing) {
+      stopComputing()
+    }
+
     if (inputNumber === null) {
       setIsCurrentNumberPrime(null)
       return;
     };
-    if (isComputing) {
-      stopComputing()
-    }
 
     const timeoutID = setTimeout(() => { // will start only after computing will stop
       setIsComputing(true)
@@ -57,7 +60,7 @@ function App() {
       return
     }
 
-    if (Number(value) >= Number.MAX_SAFE_INTEGER) {
+    if (Number(value) > Number.MAX_SAFE_INTEGER) {
       return
     }
 
