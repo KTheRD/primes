@@ -10,49 +10,49 @@ const IsPrimeComputer = (): [(n: number) => Promise<boolean | 1 | 0 | null>, () 
     if (n === 0) return 0;
     if (n === 1) return 1;
 
-    if (maxNumberChecked > n) {
+    if (maxNumberChecked >= n) {
       return generatedPrimes.includes(n)
     }
 
-    if (Math.sqrt(n) > maxNumberChecked) {
+    for (const prime of generatedPrimes) {
+      if (n % prime === 0) return false
+    }
+
+    if (Math.floor(Math.sqrt(n)) <= maxNumberChecked) return true
+
+    maxNumberChecked++
+
+    for (let loopsPassed = 1; maxNumberChecked <= Math.floor(Math.sqrt(n)); maxNumberChecked++, loopsPassed++) {
+
+      // stop the computation once in a while to stop browser from freezing
+      // also check if we must stop and check new number
+      if (loopsPassed >= 10000) {
+        loopsPassed = 0;
+        if (shouldStop) {
+          stopComputing();
+          return null;
+        }
+        await new Promise(r => setTimeout(r))
+      }
+
+      let isPrime = true
 
       for (const prime of generatedPrimes) {
-        if (n % prime === 0) return console.log(prime),false
-        if (prime > Math.sqrt(n)) return true
-      }
-
-      for (let loopsPassed = 1; maxNumberChecked <= Math.sqrt(n); maxNumberChecked++, loopsPassed++) {
-
-        // stop the computation once in a while to stop browser from freezing
-        // also check if we must stop and check new number
-        if (loopsPassed >= 10000) {
-          loopsPassed = 0;
-          if (shouldStop) {
-            stopComputing();
-            return null;
-          }
-          await new Promise(r => setTimeout(r))
-        }
-
-        let isPrime = true
-
-        for (const prime of generatedPrimes) {
-          if (prime > Math.sqrt(maxNumberChecked)) break
-          if (maxNumberChecked % prime === 0) {
-            isPrime = false
-            break
-          }
-        }
-
-        if (isPrime) {
-          generatedPrimes.push(maxNumberChecked)
-          if (n % maxNumberChecked === 0) return console.log(maxNumberChecked),false
+        if (prime > Math.floor(Math.sqrt(maxNumberChecked))) break
+        if (maxNumberChecked % prime === 0) {
+          isPrime = false
+          break
         }
       }
 
+      if (isPrime) {
+        generatedPrimes.push(maxNumberChecked)
+        if (n % maxNumberChecked === 0) return false
+      }
     }
 
     return true
+
   }
 
   return [isPrime, stopComputing]
